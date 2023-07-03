@@ -1,0 +1,11 @@
+env/
+venv/
+redenv/
+.idea
+docker-compose.yaml
+.dev.env
+.env
+import/submissions/*
+itg_db
+
+**/__pycache__/

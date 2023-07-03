@@ -1,0 +1,59 @@
+@startuml
+title "Архитектура процесса сообщения клиента и сервера Keycloak"
+
+package "Модуль графического пользовательского интерфейса "{
+[Сервис клиентского приложения] as gui
+}
+
+package "Модуль авторизации" as kb{
+package "Аутентификация и Авторизация" as aa {
+[Получение токена] as get_token
+[Проверка токена] as check_t
+}
+package "Админство" as ad {
+[Получить пользователя] as get_user_info
+[Получить роли] as get_roles
+[Получить группы] as get_groups
+[Получить состав группы] as get_all_g
+}
+package "python-keycloak" as pk {
+[oidc] as oidc
+[admin] as admin
+}
+package "Импорт пользователей" as iu {
+[Создать пользователя] as create_u
+[Создать пользователей] as create_m
+[Импортировать пользователей] as import
+}
+}
+gui --> get_roles
+gui --> get_groups
+gui --> get_all_g
+
+admin <-- get_roles
+admin <-- get_groups
+admin <-- get_all_g
+
+gui <--> get_token
+gui <--> check_t
+gui --> import
+import --> create_m
+create_m --> create_u
+create_u --> admin
+
+get_token -> oidc
+check_t -> oidc
+
+get_user_info <-- gui
+get_user_info --> admin
+
+
+package "Сервер Keycloak" {
+[ITG REALM] as psql
+}
+
+
+
+oidc <--> psql
+admin <--> psql
+@enduml
